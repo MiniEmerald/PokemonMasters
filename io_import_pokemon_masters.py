@@ -218,10 +218,9 @@ def ReadMeshChunk(f, StartAddr, ArmatureObject, Version="1.0", RemoveDoubles=Fal
     mesh1 = bpy.data.meshes.new("mesh")
     mesh1.use_auto_smooth = True
     obj = bpy.data.objects.new(ModelName, mesh1)
-    scene = bpy.context.scene
-    scene.objects.link(obj)
-    scene.objects.active = obj
-    obj.select = True 
+    bpy.context.scene.collection.objects.link(obj)
+    bpy.context.view_layer.objects.active = obj
+    obj.select_set(True) 
     mesh = bpy.context.object.data
     bm = bmesh.new()
     for v in VertTable:
@@ -237,7 +236,6 @@ def ReadMeshChunk(f, StartAddr, ArmatureObject, Version="1.0", RemoveDoubles=Fal
     bm.to_mesh(mesh)
 
     uv_layer = bm.loops.layers.uv.verify()
-    bm.faces.layers.tex.verify()
     for face in bm.faces:
         face.smooth = True
         for l in face.loops:
@@ -271,7 +269,7 @@ def ReadMeshChunk(f, StartAddr, ArmatureObject, Version="1.0", RemoveDoubles=Fal
             if x[2][i] != 0:
                 try:
                     if obj.vertex_groups.find(WeightBoneTable[x[1][i]]) == -1:
-                        TempVG = obj.vertex_groups.new(WeightBoneTable[x[1][i]])
+                        TempVG = obj.vertex_groups.new(name=WeightBoneTable[x[1][i]])
                     else:
                         TempVG = obj.vertex_groups[obj.vertex_groups.find(WeightBoneTable[x[1][i]])]
                     TempVG.add([x[0]], x[2][i], 'ADD')
@@ -301,10 +299,10 @@ def BuildSkeleton(f, DataStart):
     name = os.path.split(f.name)[-1]
     armature_data = bpy.data.armatures.new(name)
     armature_obj = bpy.data.objects.new(name, armature_data)
-    bpy.context.scene.objects.link(armature_obj)
+    bpy.context.scene.collection.objects.link(armature_obj)
     select_all(False)
-    armature_obj.select = True
-    bpy.context.scene.objects.active = armature_obj
+    armature_obj.select_set(True)
+    bpy.context.view_layer.objects.active = armature_obj
     utils_set_mode('EDIT')
     
     BoneTable = {}
@@ -349,7 +347,7 @@ def BuildSkeleton(f, DataStart):
         edit_bone.parent = BoneTable[BoneParentName]["Bone"]
         #print(BoneName)
     
-    bpy.context.scene.objects.active = armature_obj
+    bpy.context.view_layer.objects.active = armature_obj
     utils_set_mode("POSE")
     for x in BoneTable:
         pbone = armature_obj.pose.bones[x]
