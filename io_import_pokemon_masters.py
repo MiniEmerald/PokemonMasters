@@ -47,15 +47,15 @@ class PokeMasImport(bpy.types.Operator, ImportHelper):
     bl_options = {'PRESET', 'UNDO'}
     
     filename_ext = ".wismda"
-    filter_glob = StringProperty(
+    filter_glob: StringProperty(
             default="*.lmd",
             options={'HIDDEN'},
     )
- 
-    filepath = StringProperty(subtype='FILE_PATH',)
-    version = EnumProperty(name="Version", items=(("1.0","1.0","1.0"), ("1.2","1.2","1.2")), default="1.0")
-    removedoubles = BoolProperty(name="Remove Doubles")
-    files = CollectionProperty(type=bpy.types.PropertyGroup)
+
+    filepath: StringProperty(subtype='FILE_PATH',)
+    version: EnumProperty(name="Version", items=(("1.0","1.0","1.0"), ("1.2","1.2","1.2")), default="1.0")
+    removedoubles: BoolProperty(name="Remove Doubles")
+    files: CollectionProperty(type=bpy.types.PropertyGroup)
 
     def draw(self, context):
         layout = self.layout
