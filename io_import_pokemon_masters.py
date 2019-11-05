@@ -431,23 +431,36 @@ def ParseMaterials(f, DataStart):
             f.seek(x + 0x44)
         else:
             f.seek(x + 0x40)
-        TexSlotCount = int.from_bytes(f.read(4), byteorder='little')
-        TexSlotsOffset = []
-        TexSlots = []
+        TexNodeCount = int.from_bytes(f.read(4), byteorder='little')
+        TexNodesOffset = []
+        TexNodes = []
         print("- {}".format(MaterialNameText))
 
-        for y in range(TexSlotCount):
-            TexSlotsOffset.append(f.tell() + int.from_bytes(f.read(4), byteorder='little'))
-        for texslot in TexSlotsOffset:
-            f.seek(texslot)
+        for y in range(TexNodeCount):
+            TexNodesOffset.append(f.tell() + int.from_bytes(f.read(4), byteorder='little'))
+        for texnode in TexNodesOffset:
+            f.seek(texnode)
             MaterialFileReferenceSize = int.from_bytes(f.read(4), byteorder='little')
             MaterialFileReferenceName = f.read(MaterialFileReferenceSize).decode('utf-8', 'replace')
-            print('- Texture slot [{}]'.format(MaterialFileReferenceName))
-            TexSlots.append(Textures.get(MaterialFileReferenceName))
+            print('- Texture node [{}]'.format(MaterialFileReferenceName))
+            TexNodes.append(Textures.get(MaterialFileReferenceName))
 
         mat = bpy.data.materials.get(MaterialNameText)
-        if mat != None:
-            MatTable.append(mat)
+        if mat == None:
+            mat = bpy.data.materials.new(name=MaterialNameText)
+            mat.use_nodes = True
+            mat.blend_method = 'HASHED'
+            bsdf = mat.node_tree.nodes["Principled BSDF"]
+            for texture in TexNodes:
+                tex = bpy.data.textures.get(texture)
+                if tex and tex.image:
+                    texImage = mat.node_tree.nodes.new('ShaderNodeTexImage')
+                    texImage.image = bpy.data.images.load(tex.image.filepath)
+                    texImage.location = (-300, 300)
+                    mat.node_tree.links.new(bsdf.inputs['Base Color'], texImage.outputs['Color'])
+                    mat.node_tree.links.new(bsdf.inputs['Alpha'], texImage.outputs['Alpha'])
+
+        MatTable.append(mat)
 
     return MatTable
 
