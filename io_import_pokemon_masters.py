@@ -448,17 +448,8 @@ def ParseMaterials(f, DataStart):
             TexSlots.append(Textures.get(MaterialFileReferenceName))
 
         mat = bpy.data.materials.get(MaterialNameText)
-        if mat == None:
-            mat = bpy.data.materials.new(name=MaterialNameText)
-            mat.use_transparency=True
-            mat.alpha = 0.0
-            for texture in TexSlots:
-                tex = bpy.data.textures.get(texture)
-                if tex:
-                    slot = mat.texture_slots.add()
-                    slot.use_map_alpha = True
-                    slot.texture = tex
-        MatTable.append(mat)
+        if mat != None:
+            MatTable.append(mat)
 
     return MatTable
 
