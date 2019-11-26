@@ -447,24 +447,45 @@ def ParseMaterials(f, DataStart):
 
         mat = bpy.data.materials.get(MaterialNameText)
         if mat == None:
-            mat = bpy.data.materials.new(name=MaterialNameText)
-            mat.use_nodes = True
-            mat.blend_method = 'HASHED'
-            bsdf = mat.node_tree.nodes["Principled BSDF"]
-            for texture in TexNodes:
-                tex = bpy.data.textures.get(texture)
-                if tex and tex.image:
-                    texImage = mat.node_tree.nodes.new('ShaderNodeTexImage')
-                    texImage.image = bpy.data.images.load(tex.image.filepath)
-                    texImage.location = (-300, 300)
-                    mat.node_tree.links.new(bsdf.inputs['Base Color'], texImage.outputs['Color'])
-                    mat.node_tree.links.new(bsdf.inputs['Alpha'], texImage.outputs['Alpha'])
+            setupMaterialNodes(mat, MaterialNameText, TexNodes)
 
         MatTable.append(mat)
 
     return MatTable
 
+
+def setupMaterialNodes(mat, MaterialNameText, TexNodes):
+    mat = bpy.data.materials.new(name=MaterialNameText)
+    mat.use_nodes = True
+    mat.blend_method = 'HASHED'
+    bsdf = mat.node_tree.nodes['Principled BSDF']
+    for texture in TexNodes:
+        tex = bpy.data.textures.get(texture)
+        if tex and tex.image and 'Image Texture.001' not in mat.node_tree.nodes.keys():
+            left, top = -500, 300
+            texImageCo = mat.node_tree.nodes.new('ShaderNodeTexImage')
+            texImageCo.image = bpy.data.images.load(tex.image.filepath)
+            texImageCo.location = (left, top)
+
+            texImageAo = mat.node_tree.nodes.new('ShaderNodeTexImage')
+            texImageAo.image = bpy.data.images.load(tex.image.filepath.replace('_co.', '_ao.'))
+            # TODO : change color space to Non-Color
+            texImageAo.location = (left, 0)
+
+            mixRGB = mat.node_tree.nodes.new('ShaderNodeMixRGB')
+            mixRGB.blend_type = 'MULTIPLY'
+            # TODO : set fac to .300
+            mixRGB.location = (left + 330, top)
+
+            mat.node_tree.links.new(texImageCo.outputs['Color'], mixRGB.inputs['Color1'])
+            mat.node_tree.links.new(texImageCo.outputs['Alpha'], bsdf.inputs['Alpha'])
+            mat.node_tree.links.new(texImageAo.outputs['Color'], mixRGB.inputs['Color2'])
+            mat.node_tree.links.new(texImageAo.outputs['Alpha'], bsdf.inputs['Specular'])
+            mat.node_tree.links.new(mixRGB.outputs['Color'], bsdf.inputs['Base Color'])
+
+            # TODO : material name ending with _face
     
+
 def select_all(select):
     if select:
         actionString = 'SELECT'
