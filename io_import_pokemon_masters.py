@@ -488,8 +488,7 @@ def setupMaterialNodes(mat, MaterialNameText, TexSlots):
                 mappingCo.location = (xRef - 400, yRef)
 
                 mappingAo = mat.node_tree.nodes.new('ShaderNodeMapping')
-                mappingAo.scale_x = 4
-                mappingAo.scale_y = 4
+                mappingAo.scale = (4, 4, 0)
                 mappingAo.location = (xRef - 400, 0)
 
                 texCoord = mat.node_tree.nodes.new('ShaderNodeTexCoord')
