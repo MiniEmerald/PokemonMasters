@@ -13,7 +13,7 @@ Select the object, open the material tab, go down to Settings and change "Blend 
 
 ##### How do I change the characters' expressions?
 Edit the Location X and/or Location Y of the top Mapping node.
-Valid values are 0, 0.25, 0.5 and 1 for both Location X and Y.
+Valid values are 0, 0.25, 0.5 and 0.75 for both Location X and Y.
 
 
 ## Credits
