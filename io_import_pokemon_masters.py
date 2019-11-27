@@ -1,7 +1,7 @@
 bl_info = {
     "name": "Import Pokémon Masters Models",
-    "author": "Turk",
-    "version": (1, 2, 0),
+    "author": "Turk, Jugolm, MiniEmerald",
+    "version": (1, 3, 0),
     "blender": (2, 80, 0),
     "location": "File > Import-Export",
     "description": "A tool designed to import LMD files from the mobile game Pokémon Masters",
