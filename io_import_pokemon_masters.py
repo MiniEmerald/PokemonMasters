@@ -462,20 +462,20 @@ def setupMaterialNodes(mat, MaterialNameText, TexSlots):
     for texture in TexSlots:
         tex = bpy.data.textures.get(texture)
         if tex and tex.image and 'Image Texture.001' not in mat.node_tree.nodes.keys():
-            left, top = -500, 300
+            xRef, yRef = -500, 300
             texImageCo = mat.node_tree.nodes.new('ShaderNodeTexImage')
             texImageCo.image = bpy.data.images.load(tex.image.filepath)
-            texImageCo.location = (left, top)
+            texImageCo.location = (xRef, yRef)
 
             texImageAo = mat.node_tree.nodes.new('ShaderNodeTexImage')
             texImageAo.image = bpy.data.images.load(tex.image.filepath.replace('_co.', '_ao.'))
             texImageAo.image.colorspace_settings.name = 'Non-Color'
-            texImageAo.location = (left, 0)
+            texImageAo.location = (xRef, 0)
 
             mixRGB = mat.node_tree.nodes.new('ShaderNodeMixRGB')
             mixRGB.blend_type = 'MULTIPLY'
             mixRGB.inputs['Fac'].default_value = .3
-            mixRGB.location = (left + 330, top)
+            mixRGB.location = (xRef + 330, yRef)
 
             mat.node_tree.links.new(texImageCo.outputs['Color'], mixRGB.inputs['Color1'])
             mat.node_tree.links.new(texImageCo.outputs['Alpha'], bsdf.inputs['Alpha'])
@@ -483,8 +483,23 @@ def setupMaterialNodes(mat, MaterialNameText, TexSlots):
             mat.node_tree.links.new(texImageAo.outputs['Alpha'], bsdf.inputs['Specular'])
             mat.node_tree.links.new(mixRGB.outputs['Color'], bsdf.inputs['Base Color'])
 
-            # TODO : material name ending with _face
-    
+            if MaterialNameText.endswith("face"):
+                mappingCo = mat.node_tree.nodes.new('ShaderNodeMapping')
+                mappingCo.location = (xRef - 400, yRef)
+
+                mappingAo = mat.node_tree.nodes.new('ShaderNodeMapping')
+                mappingAo.scale_x = 4
+                mappingAo.scale_y = 4
+                mappingAo.location = (xRef - 400, 0)
+
+                texCoord = mat.node_tree.nodes.new('ShaderNodeTexCoord')
+                texCoord.location = (xRef - 600, yRef - 180)
+
+                mat.node_tree.links.new(mappingCo.outputs['Vector'], texImageCo.inputs['Vector'])
+                mat.node_tree.links.new(mappingAo.outputs['Vector'], texImageAo.inputs['Vector'])
+                mat.node_tree.links.new(texCoord.outputs['UV'], mappingCo.inputs['Vector'])
+                mat.node_tree.links.new(texCoord.outputs['UV'], mappingAo.inputs['Vector'])
+
 
 def select_all(select):
     if select:
