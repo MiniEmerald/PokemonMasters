@@ -469,12 +469,12 @@ def setupMaterialNodes(mat, MaterialNameText, TexNodes):
 
             texImageAo = mat.node_tree.nodes.new('ShaderNodeTexImage')
             texImageAo.image = bpy.data.images.load(tex.image.filepath.replace('_co.', '_ao.'))
-            # TODO : change color space to Non-Color
+            texImageAo.image.colorspace_settings.name = 'Non-Color'
             texImageAo.location = (left, 0)
 
             mixRGB = mat.node_tree.nodes.new('ShaderNodeMixRGB')
             mixRGB.blend_type = 'MULTIPLY'
-            # TODO : set fac to .300
+            mixRGB.inputs['Fac'].default_value = .3
             mixRGB.location = (left + 330, top)
 
             mat.node_tree.links.new(texImageCo.outputs['Color'], mixRGB.inputs['Color1'])
