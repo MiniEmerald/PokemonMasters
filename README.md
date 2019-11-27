@@ -8,5 +8,5 @@ This fork adds some transparency sets and tries to detect and import textures.
 
 ## Mini-FAQ
 
-##### The texture looks weird/noisy on some parts objects (Ex : Caitlyn/ch0095_00_cattleya's mantle)
+##### The texture looks weird/noisy on some objects (Ex : Caitlyn/ch0095_00_cattleya's mantle)
 Select the object, open the material tab, go down to Settings and change "Blend Mode" from Alpha Hashed to Alpha Blend.
