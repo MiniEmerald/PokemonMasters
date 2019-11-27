@@ -431,35 +431,35 @@ def ParseMaterials(f, DataStart):
             f.seek(x + 0x44)
         else:
             f.seek(x + 0x40)
-        TexNodeCount = int.from_bytes(f.read(4), byteorder='little')
-        TexNodesOffset = []
-        TexNodes = []
+        TexSlotCount = int.from_bytes(f.read(4), byteorder='little')
+        TexSlotsOffset = []
+        TexSlots = []
         print("- {}".format(MaterialNameText))
 
-        for y in range(TexNodeCount):
-            TexNodesOffset.append(f.tell() + int.from_bytes(f.read(4), byteorder='little'))
-        for texnode in TexNodesOffset:
+        for y in range(TexSlotCount):
+            TexSlotsOffset.append(f.tell() + int.from_bytes(f.read(4), byteorder='little'))
+        for texnode in TexSlotsOffset:
             f.seek(texnode)
             MaterialFileReferenceSize = int.from_bytes(f.read(4), byteorder='little')
             MaterialFileReferenceName = f.read(MaterialFileReferenceSize).decode('utf-8', 'replace')
-            print('- Texture node [{}]'.format(MaterialFileReferenceName))
-            TexNodes.append(Textures.get(MaterialFileReferenceName))
+            print('- Texture slot [{}]'.format(MaterialFileReferenceName))
+            TexSlots.append(Textures.get(MaterialFileReferenceName))
 
         mat = bpy.data.materials.get(MaterialNameText)
         if mat == None:
-            setupMaterialNodes(mat, MaterialNameText, TexNodes)
+            setupMaterialNodes(mat, MaterialNameText, TexSlots)
 
         MatTable.append(mat)
 
     return MatTable
 
 
-def setupMaterialNodes(mat, MaterialNameText, TexNodes):
+def setupMaterialNodes(mat, MaterialNameText, TexSlots):
     mat = bpy.data.materials.new(name=MaterialNameText)
     mat.use_nodes = True
     mat.blend_method = 'HASHED'
     bsdf = mat.node_tree.nodes['Principled BSDF']
-    for texture in TexNodes:
+    for texture in TexSlots:
         tex = bpy.data.textures.get(texture)
         if tex and tex.image and 'Image Texture.001' not in mat.node_tree.nodes.keys():
             left, top = -500, 300
