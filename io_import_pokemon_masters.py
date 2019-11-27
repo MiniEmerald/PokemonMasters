@@ -53,7 +53,7 @@ class PokeMasImport(bpy.types.Operator, ImportHelper):
     )
 
     filepath: StringProperty(subtype='FILE_PATH',)
-    version: EnumProperty(name="Version", items=(("1.0","1.0","1.0"), ("1.2","1.2","1.2")), default="1.0")
+    version: EnumProperty(name="Version", items=(("1.0","1.0","1.0"), ("1.2+","1.2+","1.2+")), default="1.2+")
     removedoubles: BoolProperty(name="Remove Doubles")
     files: CollectionProperty(type=bpy.types.PropertyGroup)
 
@@ -94,7 +94,7 @@ class PokeMasImport(bpy.types.Operator, ImportHelper):
         return {'RUNNING_MODAL'}
 
 
-def ReadMeshChunk(f, StartAddr, ArmatureObject, Version="1.0", RemoveDoubles=False):
+def ReadMeshChunk(f, StartAddr, ArmatureObject, Version, RemoveDoubles=False):
     f.seek(StartAddr + 7)
     VertChunkSize = int.from_bytes(f.read(1), byteorder='little')
     
