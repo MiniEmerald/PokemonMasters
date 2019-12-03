@@ -1,5 +1,5 @@
 # PokemonMasters
-Blender 2.80 import script for LMD files from Pokemon Masters
+Blender 2.80+ import script for LMD files from Pokemon Masters
 
 Just place it in your Blender install's addons folder and enable it in the preferences.
 
