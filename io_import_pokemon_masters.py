@@ -1,7 +1,7 @@
 bl_info = {
     "name": "Import Pokémon Masters Models",
     "author": "Turk, Jugolm, MiniEmerald",
-    "version": (1, 3, 1),
+    "version": (1, 3, 2),
     "blender": (2, 80, 0),
     "location": "File > Import-Export",
     "description": "A tool designed to import LMD files from the mobile game Pokémon Masters",
@@ -488,8 +488,12 @@ def setupMaterialNodes(mat, MaterialNameText, TexSlots):
                 mappingCo.location = (xRef - 400, yRef)
 
                 mappingAo = mat.node_tree.nodes.new('ShaderNodeMapping')
-                mappingAo.scale = (4, 4, 0)
-                mappingAo.location = (xRef - 400, 0)
+                mappingAo.location = (xRef - 400, -80)
+                try:
+                    mappingAo.inputs['Scale'].default_value = (4, 4, 1)
+                except KeyError:
+                    mappingAo.scale = (4, 4, 1)
+                    mappingAo.location[1] = 0
 
                 texCoord = mat.node_tree.nodes.new('ShaderNodeTexCoord')
                 texCoord.location = (xRef - 600, yRef - 180)
