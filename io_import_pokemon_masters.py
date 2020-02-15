@@ -1,13 +1,13 @@
 bl_info = {
     "name": "Import Pokémon Masters Models",
     "author": "Turk, Jugolm, MiniEmerald",
-    "version": (1, 3, 2),
+    "version": (1, 3, 3),
     "blender": (2, 80, 0),
     "location": "File > Import-Export",
     "description": "A tool designed to import LMD files from the mobile game Pokémon Masters",
     "warning": "",
     "wiki_url": "",
-    "tracker_url": "",
+    "tracker_url": "https://github.com/MiniEmerald/PokemonMasters",
     "category": "Import-Export"}
 
 import bpy
