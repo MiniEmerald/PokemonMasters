@@ -352,8 +352,7 @@ def BuildSkeleton(f, DataStart):
     for x in BoneTable:
         pbone = armature_obj.pose.bones[x]
         pbone.rotation_mode = 'XYZ'
-        TempRot = BoneTable[x]["Matrix"].to_euler()
-        pbone.rotation_euler = (-TempRot[0], -TempRot[1], -TempRot[2])
+        pbone.rotation_euler = BoneTable[x]["Matrix"].inverted().to_euler()
         pbone.location = BoneTable[x]["Position"]
         bpy.ops.pose.armature_apply()
     
